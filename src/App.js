@@ -1,26 +1,74 @@
 import React from 'react';
-import logo from './logo.svg';
+import axios from 'axios';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const __ = window.wp.i18n.__;
 
-export default App;
+export default class App extends React.Component{
+
+  constructor (props){
+    super(props);
+    this.axios = axios.create({
+      baseURL: window.example_rest_object.rest_url,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-WP-Nonce': window.example_rest_object.nonce
+      }
+    });
+  }  
+  
+  state = {
+    options: {
+      bla: '' 
+    }
+  }
+
+  componentDidMount(){
+    this.axios.get('/')
+      .then(res=>{
+        const options = res.data.value;
+        this.setState({options});
+      })
+      .catch(error=>{
+        console.log(error);
+      });
+  }
+
+  handleChange = event => {
+    this.setState({ bla: event.target.value });
+  }
+
+  handleSubmit = event => {
+    event.preventDefault();
+
+    const options = {
+      bla: this.state.options.bla
+    };
+
+    this.axios.post('/', { options })
+      .then(res => {
+        
+      });
+  }
+
+  render(){
+    return(
+      <section className="settings-form">
+        <form onSubmit={this.handleSubmit}>
+          <table className="form-table">
+            <tbody>
+              <tr>
+                <th scope="row">
+                <label>{__('Bla:', 'am-boilerplate-plugin')}</label>
+                </th>
+                <td><input className="regular-text" type="text" name="bla" value={ this.state.options.bla } onChange={this.handleChange} /></td>              
+              </tr>              
+            </tbody>
+          </table>
+          <p className="submit"><button className="button button-primary" type="submit">Save</button></p>
+        </form>
+      </section>
+    )
+  }
+}
