@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vurghus-minar"
+    "url": "https://github.com/vurghus-minar/wp_settings"
   },
   "keywords": [
     "wordpress",
@@ -40,7 +40,5 @@
     "webpack-cli": "^3.3.2",
     "webpack-fix-style-only-entries": "^0.2.1"
   },
-  "dependencies": {
-    "axios": "^0.19.0"
-  }
+  "dependencies": {}
 }

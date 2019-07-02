@@ -1,0 +1,21 @@
+#!/bin/bash
+
+DEST=/c/xampp/htdocs/php/wordpress/dev/wp-content/plugins/am-boilerplate-plugin/assets/settings/example
+
+if [ "$1" == "--build" ]
+then
+
+npm run build;
+
+fi
+
+rm -rf "$DEST/css" && mkdir -p "$DEST/css";
+rm -rf "$DEST/js" && mkdir -p "$DEST/js";
+
+find ./build/ -iname '*.css' -exec cp {} "$DEST/css" \;
+find ./build/ -iname '*.js' -exec cp {} "$DEST/js" \;
+
+echo ......................
+echo ......................
+echo Files copied to "$DEST"
+

@@ -7,10 +7,15 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      options: {
-        bla: '',
+      bla: '',
+      aha: '',
+      zaz: {
+        fafa: '',
+        tut: '',
       },
     };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -18,7 +23,7 @@ export default class App extends Component {
       .then(res => {
         if (res.success) {
           const options = res.value;
-          this.setState({ options });
+          this.setState({ ...options });
         }
       })
       .catch(error => {
@@ -26,7 +31,7 @@ export default class App extends Component {
       });
   }
 
-  ajax(method) {
+  ajax(method, body = '') {
     const config = {
       method,
       headers: {
@@ -35,6 +40,9 @@ export default class App extends Component {
         'X-WP-Nonce': window.example_rest_object.nonce,
       },
     };
+    if (body) {
+      config.body = body;
+    }
     return fetch(window.example_rest_object.rest_url, config)
       .then(res => res.json().then(data => (res.ok ? data : Promise.reject(data))))
       .catch(error => {
@@ -43,17 +51,35 @@ export default class App extends Component {
   }
 
   handleChange(event) {
-    this.setState({ bla: event.target.value });
+    const { name, value, type, checked } = event.target;
+    if (name.startsWith('zaz')) {
+      const prop = name.split('.')[1];
+      const zaz = { ...this.state.zaz };
+      zaz[prop] = value;
+      this.setState({ zaz });
+    } else {
+      type === 'checkbox' ? this.setState({ [name]: checked }) : this.setState({ [name]: value });
+    }
   }
 
   handleSubmit(event) {
     event.preventDefault();
+    console.log('Form Submitted!');
+    this.ajax('POST', JSON.stringify(this.state))
+      .then((res, error) => {
+        if (error) {
+          console.log(error);
+        }
 
-    const options = {
-      bla: this.state.options.bla,
-    };
-
-    // this.ajax('POST');
+        if (res.success) {
+          const options = res.value;
+          this.setState({ ...options });
+          console.log(options);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   render() {
@@ -71,7 +97,52 @@ export default class App extends Component {
                     className="regular-text"
                     type="text"
                     name="bla"
-                    value={this.state.options.bla}
+                    value={this.state.bla}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+
+              <tr>
+                <th scope="row">
+                  <label>{__('Aha:', 'am-boilerplate-plugin')}</label>
+                </th>
+                <td>
+                  <input
+                    className="regular-text"
+                    type="text"
+                    name="aha"
+                    value={this.state.aha}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+
+              <tr>
+                <th scope="row">
+                  <label>{__('Zaz Fafa:', 'am-boilerplate-plugin')}</label>
+                </th>
+                <td>
+                  <input
+                    className="regular-text"
+                    type="text"
+                    name="zaz.fafa"
+                    value={this.state.zaz.fafa}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+
+              <tr>
+                <th scope="row">
+                  <label>{__('Zaz Tut:', 'am-boilerplate-plugin')}</label>
+                </th>
+                <td>
+                  <input
+                    className="regular-text"
+                    type="text"
+                    name="zaz.tut"
+                    value={this.state.zaz.tut}
                     onChange={this.handleChange}
                   />
                 </td>
